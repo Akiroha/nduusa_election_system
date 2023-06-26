@@ -1,14 +1,43 @@
+import { useSupabase, useUser } from '@/hooks';
 import { useState } from 'react';
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
-  const disabled = email === '' || pass === '';
+  const [error, setError] = useState('');
+  const [fetching, setFetching] = useState(false);
+  const disabled =
+    email === '' || !emailRegex.test(email) || pass === '' || fetching;
+  const supabase = useSupabase();
+  const { setUser } = useUser();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setFetching(true);
     // handle supabase query
     // if no user is found, display error
     // if user is found, update user in store + change view
+    const { data, error } = await supabase.user.getUserByEmailAndPassword(
+      email.trim(),
+      pass.trim()
+    );
+
+    if (error) {
+      setError(error.message);
+      setFetching(false);
+      return;
+    }
+
+    if (data.length === 0) {
+      setError(
+        'There is no user with this email address and password combination. Please try again or reach out to the admins.'
+      );
+    } else {
+      setUser(data[0]);
+    }
+
+    setFetching(false);
   };
 
   return (
@@ -38,12 +67,13 @@ const Login = () => {
         />
       </div>
       <button
-        className="btn bg-black btn-sm mt-4 text-white"
+        className="btn bg-black btn-sm my-4 text-white"
         disabled={disabled}
         onClick={handleSubmit}
       >
         Submit
       </button>
+      {error && <p className="text-red-500 font-bold text-center">{error}</p>}
     </div>
   );
 };
