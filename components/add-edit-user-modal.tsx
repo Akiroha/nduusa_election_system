@@ -1,4 +1,5 @@
 import { useSupabase } from '@/hooks';
+import { UserType } from '@/types';
 import { useState } from 'react';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -10,14 +11,24 @@ const branchOptions = [
   { value: 'Southern', label: 'Southern' },
 ];
 
-const AddUserModal = ({ setShowAddModal }: { setShowAddModal: Function }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [branch, setBranch] = useState('');
-  const [active, setActive] = useState(false);
+interface Props {
+  selectedUser: UserType | null;
+  handleResetState: Function;
+}
+
+const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
+  const [name, setName] = useState(selectedUser?.name ?? '');
+  const [email, setEmail] = useState(selectedUser?.email ?? '');
+  const [branch, setBranch] = useState(selectedUser?.branch ?? '');
+  const [active, setActive] = useState(selectedUser?.active ?? false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const supabase = useSupabase();
+
+  const title = selectedUser ? 'Edit Member' : 'Add New Member';
+  const body = selectedUser
+    ? 'Fill out the form to edit the member.'
+    : 'Fill out the form to add a new member.';
 
   const disabled =
     name === '' ||
@@ -29,27 +40,37 @@ const AddUserModal = ({ setShowAddModal }: { setShowAddModal: Function }) => {
   const handleAdd = async () => {
     setCreating(true);
 
-    let data = {
-      name: name.trim(),
-      email: email.trim(),
-      branch: branch,
-      actiive: active,
-    };
+    let data = selectedUser
+      ? {
+          ...selectedUser,
+          name: name.trim(),
+          email: email.trim(),
+          branch: branch,
+          active: active,
+        }
+      : {
+          name: name.trim(),
+          email: email.trim(),
+          branch: branch,
+          active: active,
+        };
 
-    const { error: creationError } = await supabase.user.createUser(data);
+    const { error: creationError } = selectedUser
+      ? await supabase.user.upsertUser(data)
+      : await supabase.user.createUser(data);
 
     if (creationError) {
       setError(creationError.message);
     } else {
-      setShowAddModal(false);
+      handleResetState();
     }
   };
 
   return (
     <dialog className="modal modal-open text-black">
       <div className="modal-box bg-white">
-        <h3 className="font-bold text-lg">Add New Member</h3>
-        <p>Fill out the form to add a new member.</p>
+        <h3 className="font-bold text-lg">{title}</h3>
+        <p>{body}</p>
         <div className="flex flex-col">
           <div className="form-control">
             <label className="label label-text text-black font-bold">
@@ -114,8 +135,10 @@ const AddUserModal = ({ setShowAddModal }: { setShowAddModal: Function }) => {
           )}
         </div>
         <div className="modal-action">
-          {/* if there is a button in form, it will close the modal */}
-          <button className="btn btn-sm" onClick={() => setShowAddModal(false)}>
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={() => handleResetState()}
+          >
             cancel
           </button>
           <button
@@ -130,4 +153,4 @@ const AddUserModal = ({ setShowAddModal }: { setShowAddModal: Function }) => {
     </dialog>
   );
 };
-export default AddUserModal;
+export default AddEditUserModal;

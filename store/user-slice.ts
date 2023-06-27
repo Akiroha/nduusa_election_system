@@ -8,10 +8,11 @@ interface Props {
 const initialState: Props = {
   value: {
     id: undefined,
-    actiive: undefined,
+    active: undefined,
     branch: undefined,
     created_at: undefined,
     email: undefined,
+    phone: undefined,
     name: undefined,
     password: undefined,
     type: undefined,

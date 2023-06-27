@@ -1,34 +1,21 @@
-import { useDropdown, useSupabase } from '@/hooks';
+import { useSupabase } from '@/hooks';
 import { UserType } from '@/types';
-import { useEffect, useRef, useState } from 'react';
-import AddUserModal from './add-user-modal';
-
-const dropdownOptions = [
-  {
-    value: 'remove',
-    label: 'Remove',
-  },
-  {
-    value: 'update',
-    label: 'Update',
-  },
-  {
-    value: 'send',
-    label: 'Send Password',
-  },
-];
+import { useEffect, useState } from 'react';
+import AddEditUserModal from './add-edit-user-modal';
+import UserTableRow from './user-table-row';
+import RemoveUserModal from './remover-user-modal';
 
 const Users = () => {
-  const [users, setUsers] = useState<UserType[]>();
-  const [filteredUsers, setFilteredUsers] = useState<UserType[]>();
-  const [selected, setSelected] = useState<UserType[]>();
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [fetching, setFetching] = useState(true);
   const [filter, setFilter] = useState('');
   const supabase = useSupabase();
-  const mainRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLUListElement>(null);
-  const dropdown = useDropdown(mainRef, dropdownRef);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,6 +29,64 @@ const Users = () => {
     };
 
     fetchUsers();
+
+    const handleEvent = async (payload: any) => {
+      const { eventType, new: newValue, old } = payload;
+
+      switch (eventType) {
+        case 'INSERT':
+          setUsers((update) => {
+            if (!update) return update;
+            return [...update].concat(newValue satisfies UserType);
+          });
+          break;
+        case 'UPDATE':
+          setUsers((oldArr) => {
+            if (!oldArr) return oldArr;
+            const update = [...oldArr];
+            const oldUserIndex = update.findIndex((e) => e.id === old.id);
+
+            if (oldUserIndex === -1) return update;
+
+            update[oldUserIndex] = newValue;
+            return update;
+          });
+          break;
+        case 'DELETE':
+          setUsers((oldArr) => {
+            if (!oldArr) return oldArr;
+            const update = [...oldArr];
+            const oldUserIndex = update.findIndex((e) => e.id === old.id);
+
+            if (oldUserIndex === -1) return update;
+
+            update.splice(oldUserIndex, 1);
+            return update;
+          });
+
+          break;
+      }
+    };
+
+    const supa = supabase.getSupabase();
+    const channel = supa
+      .channel('realtime user')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user',
+        },
+        (payload) => {
+          handleEvent(payload);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supa.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {
@@ -54,7 +99,60 @@ const Users = () => {
     );
   }, [users, filter]);
 
-  const handleOptionClick = (value: string) => {};
+  useEffect(() => {
+    setAllSelected(() => {
+      if (selectedUsers?.length === 0) return false;
+      return filteredUsers?.every((user) => selectedUsers?.includes(user.id!))!;
+    });
+  }, [selectedUsers, filteredUsers]);
+
+  const handleUserMenuOptionClick = (value: string, user: UserType) => {
+    setSelectedUser(user);
+
+    switch (value) {
+      case 'update':
+        setShowAddModal(true);
+        break;
+      case 'remove':
+        setShowRemoveModal(true);
+        break;
+    }
+  };
+
+  const handleResetState = () => {
+    setSelectedUser(null);
+    setShowAddModal(false);
+    setShowRemoveModal(false);
+
+    if (selectedUsers.length > 0) {
+      setSelectedUsers([]);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedUsers((old) => {
+      if (!old) return old;
+      let update = [...old];
+      let index = update.findIndex((userId) => userId === id);
+
+      if (index === -1) {
+        update.push(id);
+      } else {
+        update.splice(index, 1);
+      }
+      return update;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedUsers(() => {
+      if (allSelected) {
+        return [];
+      } else {
+        return filteredUsers?.map((user) => user.id!);
+      }
+    });
+  };
 
   if (fetching) {
     return (
@@ -73,17 +171,42 @@ const Users = () => {
           placeholder="Filter users"
           onChange={(event) => setFilter(event.target.value)}
         />
-        <div className="flex gap-2">
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={() => setShowAddModal(true)}
-          >
-            Add user
-          </button>
-          <button className="btn btn-sm btn-primary">Upload user file</button>
-        </div>
+        {selectedUsers.length !== 0 ? (
+          <div className="flex gap-2">
+            <button
+              className="btn btn-xs lg:btn-sm btn-error"
+              onClick={() => setShowRemoveModal(true)}
+            >
+              Remove Selected
+            </button>
+            <button
+              className="btn btn-xs lg:btn-sm btn-primary"
+              onClick={() => {}}
+            >
+              Send Passwords
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              className="btn btn-xs lg:btn-sm btn-primary"
+              onClick={() => setShowAddModal(true)}
+            >
+              Add user
+            </button>
+            <button
+              className="btn btn-xs lg:btn-sm btn-primary"
+              onClick={() => {}}
+            >
+              Upload user file
+            </button>
+          </div>
+        )}
       </div>
-      <div className="text-black h-full overflow-scroll">
+      <div
+        className="text-black h-full overflow-auto"
+        style={{ overflow: 'unset' }}
+      >
         <table className="table w-full table-xs md:table-md lg:table-lg overflow-x-auto">
           <thead className="text-black">
             <tr>
@@ -92,6 +215,8 @@ const Users = () => {
                   <input
                     type="checkbox"
                     className="checkbox checkbox-xs lg:checkbox-sm checkbox-primary"
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
                   />
                 </label>
               </th>
@@ -104,74 +229,32 @@ const Users = () => {
           </thead>
           <tbody>
             {filteredUsers?.map((user) => (
-              <tr key={user.id}>
-                <th className="max-w-[1rem] whitespace-normal">
-                  <label>
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-xs lg:checkbox-sm checkbox-primary"
-                    />
-                  </label>
-                </th>
-                <td>{user.name}</td>
-                <td>{user.branch}</td>
-                <td>
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs checkbox-primary cursor-default"
-                    checked={user.actiive}
-                    onChange={() => {}}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs checkbox-primary cursor-default"
-                    checked={user.voted}
-                    onChange={() => {}}
-                  />
-                </td>
-                <th className="max-w-[1rem] whitespace-normal">
-                  <div className={dropdown.mainClass} ref={mainRef}>
-                    <label
-                      tabIndex={0}
-                      className="cursor-pointer text-white dark:text-black"
-                      onClick={() => dropdown.open()}
-                      onBlur={(e) => dropdown.blur(e)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                      >
-                        <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
-                      </svg>
-                    </label>
-                    <ul
-                      tabIndex={0}
-                      className="dropdown-content menu p-1 bg-white shadow rounded-box w-auto"
-                      ref={dropdownRef}
-                    >
-                      {dropdownOptions.map((option) => {
-                        return (
-                          <li key={option.value} className="text-black ">
-                            <a onClick={() => handleOptionClick(option.value)}>
-                              {option.label}
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </th>
-              </tr>
+              <UserTableRow
+                key={user.id}
+                user={user}
+                optionClick={handleUserMenuOptionClick}
+                selected={selectedUsers?.includes(user.id!)!}
+                toggleSelect={toggleSelect}
+              />
             ))}
           </tbody>
         </table>
       </div>
 
-      {showAddModal && <AddUserModal setShowAddModal={setShowAddModal} />}
+      {showAddModal && (
+        <AddEditUserModal
+          selectedUser={selectedUser}
+          handleResetState={handleResetState}
+        />
+      )}
+
+      {showRemoveModal && (
+        <RemoveUserModal
+          selectedUser={selectedUser}
+          handleResetState={handleResetState}
+          selectedUsers={selectedUsers}
+        />
+      )}
     </div>
   );
 };

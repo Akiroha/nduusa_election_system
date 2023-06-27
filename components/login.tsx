@@ -6,6 +6,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const Login = () => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  // const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [fetching, setFetching] = useState(false);
   const disabled =
@@ -54,6 +55,18 @@ const Login = () => {
           onChange={(event) => setEmail(event.target.value)}
         />
       </div>
+      {/* <div className="form-control">
+        <label className="label label-text text-black font-bold">
+          Phone Number
+        </label>
+        <input
+          className="border-2 border-black rounded-lg bg-white p-1"
+          type="tel"
+          autoComplete="new-password"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+        />
+      </div> */}
       <div className="form-control">
         <label className="label label-text text-black font-bold">
           Password

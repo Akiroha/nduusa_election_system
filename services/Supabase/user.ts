@@ -41,4 +41,8 @@ export default class User {
   getUsers = async () => {
     return this.supabase.from(user_table).select('*');
   };
+
+  removeUsers = async (ids: string[]) => {
+    return this.supabase.from(user_table).delete().in('id', ids);
+  };
 }

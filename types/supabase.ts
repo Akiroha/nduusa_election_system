@@ -35,35 +35,38 @@ export interface Database {
       }
       user: {
         Row: {
-          actiive: boolean
+          active: boolean
           branch: string | null
           created_at: string | null
           email: string
           id: string
           name: string
           password: string
+          phone: string
           type: string | null
           voted: boolean
         }
         Insert: {
-          actiive?: boolean
+          active?: boolean
           branch?: string | null
           created_at?: string | null
           email: string
           id?: string
           name: string
           password: string
+          phone?: string
           type?: string | null
           voted?: boolean
         }
         Update: {
-          actiive?: boolean
+          active?: boolean
           branch?: string | null
           created_at?: string | null
           email?: string
           id?: string
           name?: string
           password?: string
+          phone?: string
           type?: string | null
           voted?: boolean
         }
