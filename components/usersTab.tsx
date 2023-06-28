@@ -1,9 +1,11 @@
 import { useSupabase } from '@/hooks';
 import { UserType } from '@/types';
 import { useEffect, useState } from 'react';
-import AddEditUserModal from './add-edit-user-modal';
 import UserTableRow from './user-table-row';
-import RemoveUserModal from './remover-user-modal';
+
+import AddEditUserModal from './modals/add-edit-user-modal';
+import RemoveUserModal from './modals/remover-user-modal';
+import UploadFileModal from './modals/upload-file-modal';
 
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -15,6 +17,7 @@ const Users = () => {
   const supabase = useSupabase();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
@@ -123,6 +126,7 @@ const Users = () => {
     setSelectedUser(null);
     setShowAddModal(false);
     setShowRemoveModal(false);
+    setShowUploadModal(false);
 
     if (selectedUsers.length > 0) {
       setSelectedUsers([]);
@@ -196,18 +200,15 @@ const Users = () => {
             </button>
             <button
               className="btn btn-xs lg:btn-sm btn-primary"
-              onClick={() => {}}
+              onClick={() => setShowUploadModal(true)}
             >
               Upload user file
             </button>
           </div>
         )}
       </div>
-      <div
-        className="text-black h-full overflow-auto"
-        style={{ overflow: 'unset' }}
-      >
-        <table className="table w-full table-xs md:table-md lg:table-lg overflow-x-auto">
+      <div className="text-black h-full overflow-auto p-1">
+        <table className="table w-full table-xs md:table-md lg:table-lg overflow-auto">
           <thead className="text-black">
             <tr>
               <th className="max-w-[1rem] whitespace-normal">
@@ -254,6 +255,10 @@ const Users = () => {
           handleResetState={handleResetState}
           selectedUsers={selectedUsers}
         />
+      )}
+
+      {showUploadModal && (
+        <UploadFileModal handleResetState={handleResetState} />
       )}
     </div>
   );

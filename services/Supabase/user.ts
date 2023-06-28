@@ -15,6 +15,11 @@ const generatePassword = () => {
   return password;
 };
 
+const extractPhoneNumber = (phone: string) => {
+  const cleanedNumber = phone.replace(/[^\d]/g, '').slice(-10);
+  return cleanedNumber;
+};
+
 export default class User {
   supabase;
 
@@ -24,6 +29,15 @@ export default class User {
 
   createUser = async (data: UserType) => {
     data.password = generatePassword();
+    data.phone = extractPhoneNumber(data.phone!);
+    return this.supabase.from(user_table).insert(data);
+  };
+
+  createUsers = async (data: UserType[]) => {
+    data.forEach((d) => {
+      d.password = generatePassword();
+      d.phone = extractPhoneNumber(d.phone!);
+    });
     return this.supabase.from(user_table).insert(data);
   };
 

@@ -42,7 +42,7 @@ const RemoveUserModal = ({
       return;
     }
 
-    const { error } = await supabase.user.removeUsers(ids);
+    const { error } = await supabase.user.removeUsers(ids as string[]);
 
     if (error) {
       setError(error.message);
