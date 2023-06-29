@@ -9,6 +9,8 @@ export async function POST(request: any) {
 
   const client = new twilio(accountId, authToken);
 
+  // TODO: make sure DO NOT REPLY IS SOMEWHERE
+
   const res = await client.messages.create({
     body: 'My guy, how far?',
     from: from,

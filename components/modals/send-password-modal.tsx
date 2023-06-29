@@ -34,8 +34,6 @@ const SendPasswordModal = ({
         maxBodyLength: Infinity,
       });
 
-      console.log('res: ', res);
-
       handleResetState();
     } catch (error) {
       // console.log('error: ', error);
