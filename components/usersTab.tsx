@@ -6,6 +6,7 @@ import UserTableRow from './user-table-row';
 import AddEditUserModal from './modals/add-edit-user-modal';
 import RemoveUserModal from './modals/remover-user-modal';
 import UploadFileModal from './modals/upload-file-modal';
+import SendPasswordModal from './modals/send-password-modal';
 
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -18,6 +19,7 @@ const Users = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showSendPasswords, setShowSendPasswords] = useState(false);
   const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
@@ -112,12 +114,17 @@ const Users = () => {
   const handleUserMenuOptionClick = (value: string, user: UserType) => {
     setSelectedUser(user);
 
+    console.log('value: ', value);
+
     switch (value) {
       case 'update':
         setShowAddModal(true);
         break;
       case 'remove':
         setShowRemoveModal(true);
+        break;
+      case 'send':
+        setShowSendPasswords(true);
         break;
     }
   };
@@ -127,6 +134,7 @@ const Users = () => {
     setShowAddModal(false);
     setShowRemoveModal(false);
     setShowUploadModal(false);
+    setShowSendPasswords(false);
 
     if (selectedUsers.length > 0) {
       setSelectedUsers([]);
@@ -185,7 +193,7 @@ const Users = () => {
             </button>
             <button
               className="btn btn-xs lg:btn-sm btn-primary"
-              onClick={() => {}}
+              onClick={() => setShowSendPasswords(true)}
             >
               Send Passwords
             </button>
@@ -251,6 +259,14 @@ const Users = () => {
 
       {showRemoveModal && (
         <RemoveUserModal
+          selectedUser={selectedUser}
+          handleResetState={handleResetState}
+          selectedUsers={selectedUsers}
+        />
+      )}
+
+      {showSendPasswords && (
+        <SendPasswordModal
           selectedUser={selectedUser}
           handleResetState={handleResetState}
           selectedUsers={selectedUsers}
