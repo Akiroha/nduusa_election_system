@@ -5,7 +5,7 @@ import axios from 'axios';
 interface Props {
   handleResetState: Function;
   selectedUser: UserType | null;
-  selectedUsers: string[] | null;
+  selectedUsers: UserType[] | null;
 }
 
 const SendPasswordModal = ({
@@ -25,18 +25,40 @@ const SendPasswordModal = ({
     setSending(true);
     setError('');
 
+    let body;
+
+    if (selectedUser) {
+      body = [
+        {
+          name: selectedUser.name,
+          phone: selectedUser.phone,
+          pass: selectedUser.password,
+        },
+      ];
+    } else {
+      body = selectedUsers?.map((user) => ({
+        name: user.name,
+        phone: user.phone,
+        pass: user.password,
+      }));
+    }
+
     try {
       const res = await axios({
         method: 'post',
         url: '/api/twilio',
-        data: JSON.stringify({ name: 'hi', phone: 'sup dude' }),
+        data: JSON.stringify(body),
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
       });
 
-      handleResetState();
+      if (res.status === 200) {
+        handleResetState();
+      } else {
+        console.log('res: ', res);
+        setError('Something went wrong. Please try again.');
+      }
     } catch (error) {
-      // console.log('error: ', error);
       setError('Something went wrong. Please try again.');
     }
 

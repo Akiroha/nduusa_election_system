@@ -1,4 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
+const voting_position = 'voting_position';
 
 export default class VotingPosition {
   supabase;
@@ -7,7 +8,15 @@ export default class VotingPosition {
     this.supabase = s;
   }
 
-  upsertVotingPosition = async (data: object) => {
-    return this.supabase.from('voting_position').upsert(data);
+  upsertPosition = async (data: object) => {
+    return this.supabase.from(voting_position).upsert(data);
+  };
+
+  getPositions = async () => {
+    return this.supabase.from(voting_position).select('*');
+  };
+
+  removePosition = async (id: string) => {
+    return this.supabase.from(voting_position).delete().eq('id', id);
   };
 }

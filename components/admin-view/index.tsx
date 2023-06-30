@@ -1,6 +1,7 @@
 import { useUser } from '@/hooks';
 import { useState } from 'react';
-import Users from './usersTab';
+import Users from './user-tab';
+import VotingOptions from './voting-tab';
 
 const tabOptions = [
   { value: 'users', title: 'Users' },
@@ -30,6 +31,7 @@ const AdminView = () => {
         ))}
       </div>
       {tab === 'users' && <Users />}
+      {tab === 'voting' && <VotingOptions />}
     </div>
   );
 };

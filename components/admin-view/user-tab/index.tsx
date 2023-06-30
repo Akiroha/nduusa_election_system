@@ -114,8 +114,6 @@ const Users = () => {
   const handleUserMenuOptionClick = (value: string, user: UserType) => {
     setSelectedUser(user);
 
-    console.log('value: ', value);
-
     switch (value) {
       case 'update':
         setShowAddModal(true);
@@ -184,30 +182,30 @@ const Users = () => {
           onChange={(event) => setFilter(event.target.value)}
         />
         {selectedUsers.length !== 0 ? (
-          <div className="flex gap-2">
+          <div className="join">
             <button
-              className="btn btn-xs lg:btn-sm btn-error"
+              className="btn btn-xs lg:btn-sm btn-error join-item"
               onClick={() => setShowRemoveModal(true)}
             >
               Remove Selected
             </button>
             <button
-              className="btn btn-xs lg:btn-sm btn-primary"
+              className="btn btn-xs lg:btn-sm btn-primary join-item"
               onClick={() => setShowSendPasswords(true)}
             >
               Send Passwords
             </button>
           </div>
         ) : (
-          <div className="flex gap-2">
+          <div className="join">
             <button
-              className="btn btn-xs lg:btn-sm btn-primary"
+              className="btn btn-xs lg:btn-sm btn-primary join-item"
               onClick={() => setShowAddModal(true)}
             >
               Add user
             </button>
             <button
-              className="btn btn-xs lg:btn-sm btn-primary"
+              className="btn btn-xs lg:btn-sm btn-primary join-item"
               onClick={() => setShowUploadModal(true)}
             >
               Upload user file
@@ -269,7 +267,9 @@ const Users = () => {
         <SendPasswordModal
           selectedUser={selectedUser}
           handleResetState={handleResetState}
-          selectedUsers={selectedUsers}
+          selectedUsers={[
+            ...users.filter((user) => selectedUsers.includes(user.id!)),
+          ]}
         />
       )}
 

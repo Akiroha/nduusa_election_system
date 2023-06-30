@@ -2,7 +2,7 @@
 
 import AdminView from '@/components/admin-view';
 import Login from '@/components/login';
-import RegularMemberView from '@/components/regular-member-view';
+import RegularMemberView from '@/components/member-view';
 import { useOrg, useSupabase, useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 

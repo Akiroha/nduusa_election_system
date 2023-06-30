@@ -61,6 +61,7 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
 
     if (creationError) {
       setError(creationError.message);
+      setCreating(false);
     } else {
       handleResetState();
     }
