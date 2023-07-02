@@ -11,7 +11,6 @@ const initialState: Props = {
     active: undefined,
     branch: undefined,
     created_at: undefined,
-    email: undefined,
     phone: undefined,
     name: undefined,
     password: undefined,

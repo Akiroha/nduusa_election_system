@@ -2,13 +2,14 @@ import { useSupabase } from '@/hooks';
 import { UserType } from '@/types';
 import { useState } from 'react';
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex =
+  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
 const branchOptions = [
   { value: 'NJ', label: 'NJ' },
   { value: 'MA', label: 'MA' },
   { value: 'NY', label: 'NY' },
-  { value: 'Southern', label: 'Southern' },
+  { value: 'SOUTH', label: 'South' },
 ];
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
 
 const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
   const [name, setName] = useState(selectedUser?.name ?? '');
-  const [email, setEmail] = useState(selectedUser?.email ?? '');
+  const [phone, setPhone] = useState(selectedUser?.phone ?? '');
   const [branch, setBranch] = useState(selectedUser?.branch ?? '');
   const [active, setActive] = useState(selectedUser?.active ?? false);
   const [creating, setCreating] = useState(false);
@@ -33,8 +34,8 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
   const disabled =
     name === '' ||
     branch === '' ||
-    email === '' ||
-    !emailRegex.test(email) ||
+    phone === '' ||
+    !phoneRegex.test(phone) ||
     creating;
 
   const handleAdd = async () => {
@@ -44,13 +45,13 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
       ? {
           ...selectedUser,
           name: name.trim(),
-          email: email.trim(),
+          phone: phone.trim(),
           branch: branch,
           active: active,
         }
       : {
           name: name.trim(),
-          email: email.trim(),
+          phone: phone.trim(),
           branch: branch,
           active: active,
         };
@@ -87,14 +88,14 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
           </div>
           <div className="form-control">
             <label className="label label-text text-black font-bold">
-              Email Address
+              Phone Number
             </label>
             <input
               className="border-2 border-black rounded-lg bg-white p-1"
-              type="email"
+              type="tel"
               autoComplete="new-password"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
             />
           </div>
           <div className="form-control">

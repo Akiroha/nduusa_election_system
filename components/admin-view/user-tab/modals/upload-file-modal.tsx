@@ -6,7 +6,8 @@ interface Props {
   handleResetState: Function;
 }
 
-const phoneNumberRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+const phoneRegex =
+  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
 const sampleRows = [
   ['Zea Maleham', 'NJ', '688-534-3458', 'true'],
@@ -52,7 +53,7 @@ const UploadFileModal = ({ handleResetState }: Props) => {
       const active = fieldData[3].trim();
 
       if (!['nj', 'ny', 'ma', 'south'].includes(branch.toLowerCase())) return;
-      if (!phoneNumberRegex.test(phone)) return;
+      if (!phoneRegex.test(phone)) return;
 
       let data: UserType = {
         name: name,

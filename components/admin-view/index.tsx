@@ -2,10 +2,12 @@ import { useUser } from '@/hooks';
 import { useState } from 'react';
 import Users from './user-tab';
 import VotingOptions from './voting-tab';
+import CastVote from '../cast-vote';
 
 const tabOptions = [
   { value: 'users', title: 'Users' },
   { value: 'voting', title: 'Voting Options/Results' },
+  { value: 'vote', title: 'Cast Vote' },
 ];
 
 const AdminView = () => {
@@ -32,6 +34,7 @@ const AdminView = () => {
       </div>
       {tab === 'users' && <Users />}
       {tab === 'voting' && <VotingOptions />}
+      {tab === 'vote' && <CastVote />}
     </div>
   );
 };

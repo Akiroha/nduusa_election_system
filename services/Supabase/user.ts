@@ -45,11 +45,11 @@ export default class User {
     return this.supabase.from(user_table).upsert(data);
   };
 
-  getUserByEmailAndPassword = async (email: string, password: string) => {
+  getUserByphoneAndPassword = async (phone: string, password: string) => {
     return this.supabase
       .from(user_table)
       .select('*')
-      .match({ email: email, password: password });
+      .match({ phone: extractPhoneNumber(phone), password: password });
   };
 
   getUsers = async () => {
