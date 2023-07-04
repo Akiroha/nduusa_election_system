@@ -17,7 +17,7 @@ const AdminView = () => {
   return (
     <div className="flex flex-col flex-auto gap-2 overflow-hidden">
       <p className="text-black text-xl lg:text-2xl">
-        Hello, Admin {userSelector.value.name}
+        Hello {userSelector.value.name}
       </p>
       <div className="tabs">
         {tabOptions.map((option) => (

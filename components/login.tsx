@@ -32,7 +32,7 @@ const Login = () => {
 
     if (data.length === 0) {
       setError(
-        'There is no user with this phone address and password combination. Please try again or reach out to the admins.'
+        'There is no user with this phone number and password combination. Please try again or reach out to the admins.'
       );
     } else {
       setUser(data[0]);

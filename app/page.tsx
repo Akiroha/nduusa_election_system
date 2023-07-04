@@ -2,7 +2,7 @@
 
 import AdminView from '@/components/admin-view';
 import Login from '@/components/login';
-import RegularMemberView from '@/components/member-view';
+import MemberView from '@/components/member-view';
 import { useOrg, useSupabase, useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 
@@ -45,7 +45,7 @@ const Home = () => {
 
       {userAuthorized && userType === 'admin' && <AdminView />}
 
-      {userAuthorized && userType === 'member' && <RegularMemberView />}
+      {userAuthorized && userType === 'member' && <MemberView />}
     </div>
   );
 };

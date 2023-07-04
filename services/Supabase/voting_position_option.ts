@@ -23,4 +23,10 @@ export default class VotingPositionOption {
   removeVPO = async (id: string) => {
     return this.supabase.from(voting_position_option).delete().eq('id', id);
   };
+
+  getVPOsAndTheirPositions = async () => {
+    return this.supabase
+      .from(voting_position_option)
+      .select('id,name, voting_position(id, title)');
+  };
 }

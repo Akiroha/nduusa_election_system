@@ -1,4 +1,7 @@
+import { UserVoteType } from '@/types';
 import { SupabaseClient } from '@supabase/supabase-js';
+
+const user_vote = 'user_vote';
 
 export default class UserVote {
   supabase;
@@ -7,7 +10,7 @@ export default class UserVote {
     this.supabase = s;
   }
 
-  upsertUserVote = async (data: object) => {
-    return this.supabase.from('user_vote').upsert(data);
+  submitVotes = async (data: UserVoteType[]) => {
+    return this.supabase.from(user_vote).insert(data);
   };
 }
