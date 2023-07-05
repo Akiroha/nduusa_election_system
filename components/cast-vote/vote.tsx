@@ -1,4 +1,4 @@
-import { useSupabase, useUser } from '@/hooks';
+import { useNetwork, useSnack, useSupabase, useUser } from '@/hooks';
 import { UserVoteType } from '@/types';
 import { useEffect, useState } from 'react';
 
@@ -26,7 +26,9 @@ const Vote = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const submitDisabled = saving;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const submitDisabled = saving || !network.isOnline;
 
   useEffect(() => {
     const fetchOptionsAndPositions = async () => {
@@ -124,6 +126,7 @@ const Vote = () => {
       return;
     }
 
+    addSnack('success', 'Successfully voted!');
     user.setUser(upsertData);
     setSaving(false);
   };

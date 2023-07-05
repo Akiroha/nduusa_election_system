@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { VotingPositionType } from '@/types';
 import { useState } from 'react';
 
@@ -14,7 +14,9 @@ const AddEditPositionModal = ({
   const [pTitle, setPTitle] = useState(selectedPosition?.title ?? '');
   const [saving, setSaving] = useState(false);
   const title = selectedPosition ? 'Edit Position' : 'Add New Position';
-  const disabled = saving || pTitle.length === 0;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = saving || pTitle.length === 0 || !network.isOnline;
   const [error, setError] = useState('');
   const supabase = useSupabase();
 
@@ -35,6 +37,12 @@ const AddEditPositionModal = ({
       setSaving(false);
     } else {
       handleResetState();
+      addSnack(
+        'success',
+        selectedPosition
+          ? 'Position successfully updated!'
+          : 'Position successfully added!'
+      );
     }
   };
 

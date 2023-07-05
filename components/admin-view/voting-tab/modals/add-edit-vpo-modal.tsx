@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { VotingPositionOptionType } from '@/types';
 import { useState } from 'react';
 
@@ -20,7 +20,9 @@ const AddEditVpoModal = ({
   const title = selectedVpo
     ? 'Edit Position Option'
     : 'Add New Position Option';
-  const disabled = saving || name.length === 0;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = saving || name.length === 0 || !network.isOnline;
   const [error, setError] = useState('');
   const supabase = useSupabase();
 
@@ -44,6 +46,12 @@ const AddEditVpoModal = ({
       const action = selectedVpo ? 'edit' : 'add';
       handleOptionCrud(action, newOption[0]);
       handleResetState();
+      addSnack(
+        'success',
+        selectedVpo
+          ? 'Position option successfully updated!'
+          : 'Position option successfully added!'
+      );
     }
   };
 

@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { UserType } from '@/types';
 import { ChangeEvent, useState } from 'react';
 
@@ -26,7 +26,9 @@ const UploadFileModal = ({ handleResetState }: Props) => {
   const [membersFromFile, setMembersFromFile] = useState<UserType[]>([]);
   const [error, setError] = useState('');
   const [creating, setCreating] = useState(false);
-  const disabled = creating;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = creating || !network.isOnline;
 
   const handleDownloadSample = () => {
     const encodedUri = encodeURI(csvContent);
@@ -93,6 +95,7 @@ const UploadFileModal = ({ handleResetState }: Props) => {
       setCreating(false);
     } else {
       handleResetState();
+      addSnack('success', 'Users successfully created!');
     }
   };
 

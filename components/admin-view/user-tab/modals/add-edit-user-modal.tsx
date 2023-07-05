@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { UserType } from '@/types';
 import { useState } from 'react';
 
@@ -25,6 +25,8 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const supabase = useSupabase();
+  const { addSnack } = useSnack();
+  const network = useNetwork();
 
   const title = selectedUser ? 'Edit Member' : 'Add New Member';
   const body = selectedUser
@@ -36,7 +38,8 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
     branch === '' ||
     phone === '' ||
     !phoneRegex.test(phone) ||
-    creating;
+    creating ||
+    !network.selector.isOnline;
 
   const handleAdd = async () => {
     setCreating(true);
@@ -65,6 +68,12 @@ const AddEditUserModal = ({ selectedUser, handleResetState }: Props) => {
       setCreating(false);
     } else {
       handleResetState();
+      addSnack(
+        'success',
+        selectedUser
+          ? 'User succesfully updated!'
+          : 'User successfully created!'
+      );
     }
   };
 

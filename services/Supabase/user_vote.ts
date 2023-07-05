@@ -13,4 +13,11 @@ export default class UserVote {
   submitVotes = async (data: UserVoteType[]) => {
     return this.supabase.from(user_vote).insert(data);
   };
+
+  getVotesByPosition = async (voting_position: string) => {
+    return this.supabase
+      .from(user_vote)
+      .select('id, voting_position_option')
+      .eq('voting_position', voting_position);
+  };
 }

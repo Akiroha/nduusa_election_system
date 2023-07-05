@@ -6,8 +6,8 @@ import CastVote from '../cast-vote';
 
 const tabOptions = [
   { value: 'users', title: 'Users' },
-  { value: 'voting', title: 'Voting Options/Results' },
-  { value: 'vote', title: 'Cast Vote' },
+  { value: 'voting', title: 'Voting Options' },
+  { value: 'vote', title: 'Vote/Results' },
 ];
 
 const AdminView = () => {

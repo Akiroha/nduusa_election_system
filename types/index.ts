@@ -1,3 +1,5 @@
+export type { default as SnackType } from './snack';
+
 // supabase
 import { Database } from './supabase';
 export type UserType = Database['public']['Tables']['user']['Update'];

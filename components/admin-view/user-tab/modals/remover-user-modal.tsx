@@ -1,4 +1,4 @@
-import { useSupabase, useUser } from '@/hooks';
+import { useNetwork, useSnack, useSupabase, useUser } from '@/hooks';
 import { UserType } from '@/types';
 import { useState } from 'react';
 
@@ -21,7 +21,9 @@ const RemoveUserModal = ({
   const body = selectedUser
     ? `Are you sure you want to remove ${selectedUser.name}?`
     : `Are you sure that you want to remove ${selectedUsers?.length} users?`;
-  const disabled = deleting;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = deleting || !network.isOnline;
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -48,6 +50,7 @@ const RemoveUserModal = ({
       setError(error.message);
     } else {
       handleResetState();
+      addSnack('success', 'User successfully removed!');
     }
 
     setDeleting(false);

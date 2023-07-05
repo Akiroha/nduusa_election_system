@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { VotingPositionType } from '@/types';
 import { useState } from 'react';
 
@@ -10,7 +10,9 @@ interface Props {
 const RemovePositionModal = ({ position, handleResetState }: Props) => {
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState('');
-  const disabled = removing;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = removing || !network.isOnline;
   const supabase = useSupabase();
 
   const handleRemove = async () => {
@@ -24,6 +26,7 @@ const RemovePositionModal = ({ position, handleResetState }: Props) => {
       setRemoving(false);
     } else {
       handleResetState();
+      addSnack('success', 'Postion successfully removed!');
     }
   };
 

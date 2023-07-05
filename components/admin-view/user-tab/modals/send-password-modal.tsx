@@ -1,6 +1,7 @@
 import { UserType } from '@/types';
 import { useState } from 'react';
 import axios from 'axios';
+import { useNetwork, useSnack } from '@/hooks';
 
 interface Props {
   handleResetState: Function;
@@ -15,6 +16,9 @@ const SendPasswordModal = ({
 }: Props) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = sending || !network.isOnline;
 
   const title = selectedUser ? 'Send Password' : 'Send Passwords';
   const body = selectedUser
@@ -54,8 +58,8 @@ const SendPasswordModal = ({
 
       if (res.status === 200) {
         handleResetState();
+        addSnack('success', 'Passwords successfully sent!');
       } else {
-        console.log('res: ', res);
         setError('Something went wrong. Please try again.');
       }
     } catch (error) {
@@ -81,7 +85,7 @@ const SendPasswordModal = ({
           <button
             className="btn btn-sm btn-primary"
             onClick={() => handleSend()}
-            disabled={sending}
+            disabled={disabled}
           >
             Send password
           </button>

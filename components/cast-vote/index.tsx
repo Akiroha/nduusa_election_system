@@ -5,11 +5,11 @@
 
 import moment from 'moment';
 import { useOrg, useUser } from '@/hooks';
-import Results from './results';
 import Inactive from './inactive';
 import Voted from './voted';
 import Countdown from './countdown';
 import Vote from './vote';
+import Results from './results';
 
 const CastVote = () => {
   const { selector: user } = useUser();

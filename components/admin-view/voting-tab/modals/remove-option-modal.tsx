@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useNetwork, useSnack, useSupabase } from '@/hooks';
 import { VotingPositionOptionType } from '@/types';
 import { useState } from 'react';
 
@@ -16,7 +16,9 @@ const RemoveOptionModal = ({
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState('');
   const supabase = useSupabase();
-  const disabled = removing;
+  const { addSnack } = useSnack();
+  const { selector: network } = useNetwork();
+  const disabled = removing || !network.isOnline;
 
   const handleRemove = async () => {
     setRemoving(true);
@@ -30,6 +32,7 @@ const RemoveOptionModal = ({
     } else {
       handleOptionCrud('delete', selectedVpo);
       handleResetState();
+      addSnack('success', 'Position option successfully removed!');
     }
   };
 

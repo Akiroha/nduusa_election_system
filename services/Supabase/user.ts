@@ -49,7 +49,10 @@ export default class User {
     return this.supabase
       .from(user_table)
       .select('*')
-      .match({ phone: extractPhoneNumber(phone), password: password });
+      .match({
+        phone: extractPhoneNumber(phone),
+        password: password.toUpperCase(),
+      });
   };
 
   getUsers = async () => {
