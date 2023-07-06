@@ -1,5 +1,7 @@
 import { useNetwork, useSnack, useSupabase, useUser } from '@/hooks';
+import Image from 'next/image';
 import { useState } from 'react';
+const nduusa_logo = '/nduusa_logo.jpeg';
 
 const phoneRegex =
   /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
@@ -57,6 +59,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col text-black h-full items-center justify-center gap-2">
+      <Image src={nduusa_logo} alt="NDUUSA Logo" width={200} height={200} />
       <div className="form-control">
         <label className="label label-text text-black font-bold">
           Phone Number

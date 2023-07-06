@@ -17,8 +17,9 @@ interface LocalOptions {
 const PositionResults = ({ positionId, title, options }: Props) => {
   const supabase = useSupabase();
   const [fetching, setFetching] = useState(true);
-  const [voteCount, setVoteCount] = useState(0);
   const [localOptions, setLocalOptions] = useState<LocalOptions[]>([]);
+  const [mostVotes, setMostVotes] = useState(0);
+  const [tie, setTie] = useState(false);
 
   useEffect(() => {
     const fetchVotesByPosition = async () => {
@@ -30,8 +31,7 @@ const PositionResults = ({ positionId, title, options }: Props) => {
         let opToVotesMap = new Map<string, number>();
         let totalVoteCount = data.length;
         let localOps = [];
-
-        setVoteCount(totalVoteCount);
+        let highestVoteCount = 0;
 
         data.forEach((vote) => {
           let op = vote.voting_position_option;
@@ -58,6 +58,16 @@ const PositionResults = ({ positionId, title, options }: Props) => {
             return 1;
           });
 
+        localOps.forEach((op) => {
+          if (op.count > highestVoteCount) {
+            highestVoteCount = op.count;
+          }
+        });
+
+        setTie(
+          [...localOps].filter((op) => op.count === highestVoteCount).length > 1
+        );
+        setMostVotes(highestVoteCount);
         setLocalOptions(localOps);
       }
       setFetching(false);
@@ -76,13 +86,16 @@ const PositionResults = ({ positionId, title, options }: Props) => {
 
   return (
     <div className="flex flex-col">
-      <p className="text-2xl font-bold mb-2">{title}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-2xl font-bold mb-2">{title}</p>
+        {tie && <p className="font-bold text-primary">Tie!</p>}
+      </div>
       <div className="flex flex-col gap-2">
-        {localOptions.map((option, index) => (
+        {localOptions.map((option) => (
           <div
             key={option.id}
             className={`flex gap-2 justify-between text-lg ${
-              index === 0 && 'text-primary font-bold'
+              option.count === mostVotes && 'text-primary font-bold'
             }`}
           >
             <p>{option.name}</p>
