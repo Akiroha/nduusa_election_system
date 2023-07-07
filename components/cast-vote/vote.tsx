@@ -39,7 +39,7 @@ const Vote = () => {
         let postionOptionsMap = new Map();
         let positionToVoteMap = new Map();
 
-        data.forEach((option) => {
+        data.forEach((option: any) => {
           let positionId = option.voting_position.id;
           let op = { id: option.id, name: option.name };
 

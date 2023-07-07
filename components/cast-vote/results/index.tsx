@@ -20,7 +20,7 @@ const Results = () => {
       if (!error && data) {
         let postionOptionsMap = new Map();
 
-        data.forEach((option) => {
+        data.forEach((option: any) => {
           let positionId = option.voting_position.id;
           let op = { id: option.id, name: option.name };
 
