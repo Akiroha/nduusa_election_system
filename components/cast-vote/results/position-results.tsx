@@ -30,8 +30,13 @@ const PositionResults = ({ positionId, title, options }: Props) => {
       if (!error && data) {
         let opToVotesMap = new Map<string, number>();
         let totalVoteCount = data.length;
-        let localOps = [];
         let highestVoteCount = 0;
+        let localOps: {
+          id: string;
+          name: string;
+          count: number;
+          percent: number;
+        }[] = [];
 
         data.forEach((vote) => {
           let op = vote.voting_position_option;
@@ -44,19 +49,16 @@ const PositionResults = ({ positionId, title, options }: Props) => {
           }
         });
 
-        localOps = options
-          .map((op) => ({
+        options.forEach((op) => {
+          let votesCount = opToVotesMap.get(op.id) ?? 0;
+
+          localOps.push({
             id: op.id,
             name: op.name,
-            count: opToVotesMap.get(op.id) ?? 0,
-            percent: opToVotesMap?.get(op.id)
-              ? Math.round((opToVotesMap.get(op.id) / totalVoteCount) * 100)
-              : 0,
-          }))
-          .sort((a, b) => {
-            if (a.percent > b.percent) return -1;
-            return 1;
+            count: votesCount,
+            percent: Math.round((votesCount / totalVoteCount) * 100),
           });
+        });
 
         localOps.forEach((op) => {
           if (op.count > highestVoteCount) {
