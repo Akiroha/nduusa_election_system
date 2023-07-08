@@ -29,21 +29,25 @@ const SendPasswordModal = ({
     setSending(true);
     setError('');
 
-    let body;
+    let body: {
+      path: string;
+      users: { name: string; phone: string; pass: string }[];
+    } = {
+      path: window.location.origin,
+      users: [],
+    };
 
     if (selectedUser) {
-      body = [
-        {
-          name: selectedUser.name,
-          phone: selectedUser.phone,
-          pass: selectedUser.password,
-        },
-      ];
+      body.users.push({
+        name: selectedUser.name!,
+        phone: selectedUser.phone!,
+        pass: selectedUser.password!,
+      });
     } else {
-      body = selectedUsers?.map((user) => ({
-        name: user.name,
-        phone: user.phone,
-        pass: user.password,
+      body.users = selectedUsers!.map((user) => ({
+        name: user.name!,
+        phone: user.phone!,
+        pass: user.password!,
       }));
     }
 

@@ -7,11 +7,14 @@ export async function POST(req: any) {
   const client = new twilio(accountId, authToken);
 
   const body = await req.json();
+  const { path, users } = body;
 
   let promiseArray: any[] = [];
 
-  body.forEach((user: any) => {
-    promiseArray.push(sendPassword(client, user.name, user.phone, user.pass));
+  users.forEach((user: any) => {
+    promiseArray.push(
+      sendPassword(client, user.name, user.phone, user.pass, path)
+    );
   });
 
   let res = await Promise.all(promiseArray);
@@ -23,9 +26,10 @@ const sendPassword = (
   client: any,
   name: string,
   phone: string,
-  pass: string
+  pass: string,
+  path: string
 ) => {
-  const message = `Hello ${name}!\nWelcome to the NDUUSA 2023 Elections\n\nPlease visit https://google.com in order to vote. Your credentials are:\n\nPhone number: ${phone}\nPassword: ${pass}\n\nDO NOT REPLY.`;
+  const message = `Hello ${name}!\nWelcome to the NDUUSA 2023 Elections\n\nPlease visit ${path} in order to vote. Your credentials are:\n\nPhone number: ${phone}\nPassword: ${pass}\n\nDO NOT REPLY.`;
 
   return client.messages.create({
     body: message,

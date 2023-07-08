@@ -6,8 +6,8 @@ import VotingPosition from './voting_position';
 import VotingPositionOption from './voting_position_option';
 
 const supabase = createClient(
-  process.env.supabase_URL!,
-  process.env.supabase_PUBLIC_KEY!
+  process.env.NEXT_PUBLIC_supabase_URL!,
+  process.env.NEXT_PUBLIC_supabase_PUBLIC_KEY!
 );
 
 export default class Supabase {
