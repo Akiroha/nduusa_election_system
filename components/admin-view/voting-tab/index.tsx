@@ -2,7 +2,7 @@ import { VotingPositionType } from '@/types';
 import { useEffect, useState } from 'react';
 import VotingPosition from './voting-position';
 import AddEditPositionModal from './modals/add-edit-position-modal';
-import { useSupabase, useSubscribe } from '@/hooks';
+import { useSupabase, useSubscribe, useElectionYear } from '@/hooks';
 
 const VotingOptions = () => {
   const [fetching, setFetching] = useState(true);
@@ -11,6 +11,7 @@ const VotingOptions = () => {
     useState<VotingPositionType | null>(null);
   const [showPositionModal, setShowPositionModal] = useState(false);
   const supabase = useSupabase();
+  const { selector: election_year } = useElectionYear();
 
   const handleSubscribeCallback = (payload: any) => {
     const { eventType, new: newValue, old } = payload;
@@ -53,7 +54,9 @@ const VotingOptions = () => {
 
   useEffect(() => {
     const fetchPositions = async () => {
-      const { data, error } = await supabase.voting_position.getPositions();
+      const { data, error } = await supabase.voting_position.getPositionsByYear(
+        election_year.value.id!
+      );
 
       if (!error && data) {
         setPositions(data);

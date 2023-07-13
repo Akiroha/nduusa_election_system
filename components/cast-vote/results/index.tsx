@@ -1,4 +1,4 @@
-import { useSupabase } from '@/hooks';
+import { useElectionYear, useSupabase } from '@/hooks';
 import { useEffect, useState } from 'react';
 import PositionResults from './position-results';
 
@@ -11,11 +11,14 @@ const Results = () => {
       { title: string; options: { id: string; name: string }[] }
     >()
   );
+  const { selector: election_year } = useElectionYear();
 
   useEffect(() => {
     const fetchOptionsAndPositions = async () => {
       const { data, error } =
-        await supabase.voting_position_option.getVPOsAndTheirPositions();
+        await supabase.voting_position_option.getVPOsAndTheirPositions(
+          election_year.value.id!
+        );
 
       if (!error && data) {
         let postionOptionsMap = new Map();

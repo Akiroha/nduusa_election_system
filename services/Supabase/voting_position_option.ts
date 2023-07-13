@@ -24,9 +24,10 @@ export default class VotingPositionOption {
     return this.supabase.from(voting_position_option).delete().eq('id', id);
   };
 
-  getVPOsAndTheirPositions = async () => {
+  getVPOsAndTheirPositions = async (election_year: string) => {
     return this.supabase
       .from(voting_position_option)
-      .select('id,name, voting_position(id, title)');
+      .select('id,name, voting_position!inner(id, title,election_year)')
+      .eq('voting_position.election_year', election_year);
   };
 }

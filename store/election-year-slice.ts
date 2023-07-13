@@ -1,30 +1,30 @@
-import { OrgType } from '@/types';
+import { ElectionYearType } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Props {
-  value: OrgType;
+  value: ElectionYearType;
 }
 
 const initialState: Props = {
   value: {
     id: undefined,
     created_at: undefined,
+    year: undefined,
     voting_starts: undefined,
     voting_ends: undefined,
-    voting_open: undefined,
   },
 };
 
-const orgSlice = createSlice({
-  name: 'org',
+const electionYearSlice = createSlice({
+  name: 'election_year',
   initialState,
   reducers: {
-    setOrg(state, action: PayloadAction<OrgType>) {
+    setElectionYear(state, action: PayloadAction<ElectionYearType>) {
       state.value = action.payload;
     },
   },
 });
 
-export const orgActions = orgSlice.actions;
+export const electionYearActions = electionYearSlice.actions;
 
-export default orgSlice;
+export default electionYearSlice;

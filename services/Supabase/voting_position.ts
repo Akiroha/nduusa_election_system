@@ -12,8 +12,11 @@ export default class VotingPosition {
     return this.supabase.from(voting_position).upsert(data);
   };
 
-  getPositions = async () => {
-    return this.supabase.from(voting_position).select('*');
+  getPositionsByYear = async (election_year: string) => {
+    return this.supabase
+      .from(voting_position)
+      .select('*')
+      .eq('election_year', election_year);
   };
 
   removePosition = async (id: string) => {

@@ -1,4 +1,4 @@
-import { useNetwork, useSnack, useSupabase } from '@/hooks';
+import { useElectionYear, useNetwork, useSnack, useSupabase } from '@/hooks';
 import { VotingPositionType } from '@/types';
 import { useState } from 'react';
 
@@ -19,6 +19,7 @@ const AddEditPositionModal = ({
   const disabled = saving || pTitle.length === 0 || !network.isOnline;
   const [error, setError] = useState('');
   const supabase = useSupabase();
+  const { selector: election_year } = useElectionYear();
 
   const handleAdd = async () => {
     setSaving(true);
@@ -27,6 +28,7 @@ const AddEditPositionModal = ({
       ? { ...selectedPosition, title: pTitle }
       : {
           title: pTitle,
+          election_year: election_year.value.id,
         };
 
     const { error: creationError } =
