@@ -1,12 +1,12 @@
-import { useNetwork, useSnack, useSupabase, useUser } from '@/hooks';
+import {
+  useElectionYear,
+  useNetwork,
+  useSnack,
+  useSupabase,
+  useUser,
+} from '@/hooks';
 import { UserVoteType } from '@/types';
 import { useEffect, useState } from 'react';
-
-interface OptionProps {
-  id: string;
-  name: string;
-  voting_position: { id: string; title: string };
-}
 
 const Vote = () => {
   const user = useUser();
@@ -29,11 +29,14 @@ const Vote = () => {
   const { addSnack } = useSnack();
   const { selector: network } = useNetwork();
   const submitDisabled = saving || !network.isOnline;
+  const { selector: election_year } = useElectionYear();
 
   useEffect(() => {
     const fetchOptionsAndPositions = async () => {
       const { data, error } =
-        await supabase.voting_position_option.getVPOsAndTheirPositions();
+        await supabase.voting_position_option.getVPOsAndTheirPositions(
+          election_year.value.id!
+        );
 
       if (!error && data) {
         let postionOptionsMap = new Map();
@@ -104,6 +107,7 @@ const Vote = () => {
         voting_position: key,
         voting_position_option: value,
         user: user.selector.value.id,
+        election_year: election_year.value.id,
       });
     });
 

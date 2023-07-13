@@ -3,31 +3,34 @@
 import AdminView from '@/components/admin-view';
 import Login from '@/components/login';
 import MemberView from '@/components/member-view';
-import { useOrg, useSupabase, useUser } from '@/hooks';
+import { useElectionYear, useSupabase, useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 
 const Home = () => {
-  const { setOrg } = useOrg();
+  const { setElectionYear } = useElectionYear();
   const supabase = useSupabase();
-  const [fetchingOrg, setFetchingOrg] = useState(true);
+  const [fetchingElectionYear, setFetchingElectionYear] = useState(true);
   const user = useUser();
   const userAuthorized = !!user.selector.value.id;
   const userType = user?.selector?.value?.type;
+  const thisYear = new Date().getFullYear().toString();
 
   useEffect(() => {
-    const fetchOrg = async () => {
-      const { data, error } = await supabase.organization.getOrganization();
+    const fetchElectionYear = async () => {
+      const { data, error } = await supabase.electiion_year.getElectionYear(
+        thisYear
+      );
       if (!error && data) {
-        setOrg(data);
+        setElectionYear(data);
       }
 
-      setFetchingOrg(false);
+      setFetchingElectionYear(false);
     };
 
-    fetchOrg();
+    fetchElectionYear();
   }, []);
 
-  if (fetchingOrg) {
+  if (fetchingElectionYear) {
     return (
       <div className="h-full flex flex-col gap-2 items-center justify-center">
         <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -38,7 +41,7 @@ const Home = () => {
   return (
     <div className="h-full flex flex-col gap-2">
       <p className="text-black text-3xl lg:text-6xl font-bold text-center">
-        Welcome to the NDUUSA 2023 Elections
+        {`Welcome to the NDUUSA ${thisYear} Elections`}
       </p>
 
       {!userAuthorized && <Login />}

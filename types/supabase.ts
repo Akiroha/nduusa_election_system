@@ -3,33 +3,33 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
   public: {
     Tables: {
-      organization: {
+      election_year: {
         Row: {
           created_at: string | null
           id: string
-          voting_ends: string | null
-          voting_open: boolean | null
-          voting_starts: string | null
+          voting_ends: string
+          voting_starts: string
+          year: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          voting_ends?: string | null
-          voting_open?: boolean | null
-          voting_starts?: string | null
+          voting_ends: string
+          voting_starts: string
+          year: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          voting_ends?: string | null
-          voting_open?: boolean | null
-          voting_starts?: string | null
+          voting_ends?: string
+          voting_starts?: string
+          year?: string
         }
         Relationships: []
       }
@@ -38,7 +38,6 @@ export interface Database {
           active: boolean
           branch: string | null
           created_at: string | null
-          email: string
           id: string
           name: string
           password: string
@@ -50,7 +49,6 @@ export interface Database {
           active?: boolean
           branch?: string | null
           created_at?: string | null
-          email: string
           id?: string
           name: string
           password: string
@@ -62,7 +60,6 @@ export interface Database {
           active?: boolean
           branch?: string | null
           created_at?: string | null
-          email?: string
           id?: string
           name?: string
           password?: string
@@ -75,6 +72,7 @@ export interface Database {
       user_vote: {
         Row: {
           created_at: string | null
+          election_year: string | null
           id: string
           user: string
           voting_position: string
@@ -82,6 +80,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string | null
+          election_year?: string | null
           id?: string
           user: string
           voting_position: string
@@ -89,12 +88,19 @@ export interface Database {
         }
         Update: {
           created_at?: string | null
+          election_year?: string | null
           id?: string
           user?: string
           voting_position?: string
           voting_position_option?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_vote_election_year_fkey"
+            columns: ["election_year"]
+            referencedRelation: "election_year"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_vote_user_fkey"
             columns: ["user"]
@@ -118,20 +124,30 @@ export interface Database {
       voting_position: {
         Row: {
           created_at: string | null
+          election_year: string
           id: string
           title: string
         }
         Insert: {
           created_at?: string | null
+          election_year: string
           id?: string
           title: string
         }
         Update: {
           created_at?: string | null
+          election_year?: string
           id?: string
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "voting_position_election_year_fkey"
+            columns: ["election_year"]
+            referencedRelation: "election_year"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       voting_position_option: {
         Row: {

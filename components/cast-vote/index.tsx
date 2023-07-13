@@ -4,7 +4,7 @@
 // 4. edit voting, polls close on mm/dd/yyy at hh:mm:ss
 
 import moment from 'moment';
-import { useOrg, useUser } from '@/hooks';
+import { useElectionYear, useUser } from '@/hooks';
 import Inactive from './inactive';
 import Voted from './voted';
 import Countdown from './countdown';
@@ -13,9 +13,9 @@ import Results from './results';
 
 const CastVote = () => {
   const { selector: user } = useUser();
-  const { selector: org } = useOrg();
+  const { selector: election_year } = useElectionYear();
   const { active, voted } = user.value;
-  const { voting_starts, voting_ends } = org.value;
+  const { voting_starts, voting_ends } = election_year.value;
   const pollsOpened = moment(voting_starts).isBefore(moment());
   const pollsClosed = moment(voting_ends).isBefore(moment());
 
